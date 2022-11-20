@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    alpine-nginx-certbot:
+        image: alpine-nginx-certbot
+        restart: always
+        build:
+            context: ./container/alpine-nginx-certbot/
+            dockerfile: Dockerfile
+        ports:
+            - 80:80
+            - 443:443
+        environment:  # env var to be passed to container, not affect the compose-file's var
+            - DOMAIN=example.com
+            - EMAIL=hi@example.com
+        volumes:
+            - ./conf/nginx:/etc/nginx
+            - ./conf/html:/usr/share/nginx/html
+            - ./conf/letsencrypt:/etc/letsencrypt
+            - ./data/log/nginx:/var/log/nginx

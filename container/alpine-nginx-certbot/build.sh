@@ -1,4 +1,7 @@
 #!/bin/sh
 
+
+CONTAINER_UTIL=/usr/bin/docker
+
 # build image
-podman build -t alpine-nginx-certbot .
+${CONTAINER_UTIL} build -t alpine-nginx-certbot .
