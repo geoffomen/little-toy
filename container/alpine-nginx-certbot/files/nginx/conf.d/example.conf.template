@@ -1,15 +1,18 @@
 server {
 	listen 80;
-	server_name {{DOMAIN}} www.{{DOMAIN}};
+	server_name {{DOMAIN}};
 	return 301 https://{{DOMAIN}}$request_uri;
 }
 
 server {
 	listen 443 ssl;
-	server_name {{DOMAIN}} www.{{DOMAIN}};
+	server_name {{DOMAIN}};
+	
+	access_log /var/log/nginx/access_{{DOMAIN}}.log main;
 
 	ssl_certificate /etc/letsencrypt/live/{{DOMAIN}}/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/{{DOMAIN}}/privkey.pem;
+
 	# Enables a shared SSL cache with size that can hold around 8000 sessions.
 	#ssl_session_cache shared:SSL:9m;
 	ssl_session_timeout 9h;
@@ -43,7 +46,7 @@ server {
 	location / {
 		root /usr/share/nginx/html/;
 		try_files $uri $uri/ /index.html;
-		#rewrite ^/$ https://www.samsclub.com/ redirect;
+		#rewrite ^/$ https://www.example.com/ redirect;
 	}
 }
 

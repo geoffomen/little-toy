@@ -23,14 +23,12 @@ fi
 if [ ! -d /etc/nginx ]; then
         mkdir -p /etc/nginx
 fi
-if [ ! "$(ls -A /etc/nginx)" ]; then
-        cp -rv /opt/nginx-1.23.2/conf/* /etc/nginx/
-        cp -v /opt/alpine_nginx_cerbot/nginx/nginx.conf /etc/nginx/nginx.conf
-        cp -rv /opt/alpine_nginx_cerbot/nginx/conf.d /etc/nginx/
-	if [ ! -f /etc/nginx/conf.d/${DOMAIN}.conf ]; then 
-		/bin/cp -v /etc/nginx/conf.d/example.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
-		${SED} -i "s/{{DOMAIN}}/${DOMAIN}/g" /etc/nginx/conf.d/${DOMAIN}.conf
-	fi
+if [ ! "$(ls -A /etc/nginx | grep -v nginx.conf | grep -v conf.d)" ]; then
+        rsync -av --exclude=nginx.conf --exclude=conf.d /opt/nginx-${NGINX_VER}/conf/* /etc/nginx/
+fi
+if [ ! -f /etc/nginx/conf.d/${DOMAIN}.conf ]; then 
+        /bin/cp -v /etc/nginx/conf.d/example.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
+        ${SED} -i "s/{{DOMAIN}}/${DOMAIN}/g" /etc/nginx/conf.d/${DOMAIN}.conf
 fi
 if [ ! -d /usr/share/nginx/html/ ]; then
         mkdir -p /usr/share/nginx/html/
@@ -38,10 +36,13 @@ fi
 if [ ! "$(ls -A /usr/share/nginx/html)" ]; then
         cp -rv /opt/alpine_nginx_cerbot/nginx/html/* /usr/share/nginx/html/
 fi
-mkdir -p /var/log/nginx
+if [ ! -d /var/log/nginx ]; then
+        mkdir -p /var/log/nginx
+fi
 
-if [ ! -f /etc/periodic/daily/cerbot_renew.bin ]; then
-	cp -v /opt/alpine_nginx_cerbot/certbot/cerbot_renew.bin /etc/periodic/daily/
+if [ ! -f /etc/periodic/daily/cerbot_renew.sh ]; then
+	cp -v /opt/alpine_nginx_cerbot/certbot/cerbot_renew.sh /etc/periodic/daily/
+        chmod +x /etc/periodic/daily/cerbot_renew.sh
 fi
 for cf in $(cd /etc/nginx/conf.d/ && ls *.conf | grep -v default.conf); do
 	d=$(echo ${cf} |sed -e 's/.conf$//'); 

@@ -7,14 +7,19 @@ services:
         build:
             context: ./container/alpine-nginx-certbot/
             dockerfile: Dockerfile
+            args:
+                - NGINX_VER=1.23.2
         ports:
             - 80:80
             - 443:443
         environment:  # env var to be passed to container, not affect the compose-file's var
             - DOMAIN=example.com
             - EMAIL=hi@example.com
+            - NGINX_VER=1.23.2
         volumes:
-            - ./conf/nginx:/etc/nginx
-            - ./conf/html:/usr/share/nginx/html
-            - ./conf/letsencrypt:/etc/letsencrypt
+            - ./container/alpine-nginx-certbot/files/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./container/alpine-nginx-certbot/files/nginx/conf.d:/etc/nginx/conf.d
+            - ./container/alpine-nginx-certbot/files/nginx/html:/usr/share/nginx/html
+            - ./container/alpine-nginx-certbot/files/letsencrypt:/etc/letsencrypt
             - ./data/log/nginx:/var/log/nginx
+        #command: tail -f /dev/null
