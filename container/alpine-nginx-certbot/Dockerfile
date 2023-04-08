@@ -2,7 +2,7 @@ ARG IMAGE=alpine:3.17
 
 FROM $IMAGE AS builder
 ARG NGINX_VER
-ENV NGINX_VER={NGINX_VER}
+ENV NGINX_VER=${NGINX_VER}
 ENV PATCH=proxy_connect_rewrite_102101.patch
 RUN apk add --no-cache --update alpine-sdk pcre2-dev libzip-dev openssl-dev && \
 	cd /tmp && \
@@ -17,7 +17,7 @@ RUN apk add --no-cache --update alpine-sdk pcre2-dev libzip-dev openssl-dev && \
 FROM $IMAGE
 RUN apk add --no-cache --update certbot certbot-nginx sed pcre2 libzip openssl rsync
 ARG NGINX_VER
-ENV NGINX_VER={NGINX_VER}
+ENV NGINX_VER=${NGINX_VER}
 COPY --from=builder /opt/nginx-$NGINX_VER /opt/nginx-$NGINX_VER
 COPY ./files /opt/alpine_nginx_cerbot
 RUN ln -s /opt/nginx-$NGINX_VER/sbin/nginx /usr/sbin/ && \

@@ -27,7 +27,7 @@ if [ ! "$(ls -A /etc/nginx | grep -v nginx.conf | grep -v conf.d)" ]; then
         rsync -av --exclude=nginx.conf --exclude=conf.d /opt/nginx-${NGINX_VER}/conf/* /etc/nginx/
 fi
 if [ ! -f /etc/nginx/conf.d/${DOMAIN}.conf ]; then 
-        /bin/cp -v /etc/nginx/conf.d/example.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
+        /bin/cp -v /etc/nginx/conf.d/forward_proxy.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
         ${SED} -i "s/{{DOMAIN}}/${DOMAIN}/g" /etc/nginx/conf.d/${DOMAIN}.conf
 fi
 if [ ! -d /usr/share/nginx/html/ ]; then

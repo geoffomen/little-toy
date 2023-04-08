@@ -5,7 +5,7 @@ server {
 }
 
 server {
-	listen 443 ssl;
+	listen 443 ssl default;
 	server_name {{DOMAIN}};
 	
 	access_log /var/log/nginx/access_{{DOMAIN}}.log main;
@@ -23,6 +23,15 @@ server {
 	ssl_ciphers EECDH+CHACHA20:EECDH+AES;
 	ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
+	# forward proxy for CONNECT request
+	proxy_connect;
+	proxy_connect_allow            all;
+	proxy_connect_connect_timeout  15s;
+	proxy_connect_read_timeout     15s;
+	proxy_connect_send_timeout     15s;
+	# dns resolver used by forward proxying
+	resolver                       9.9.9.9 1.1.1.1 8.8.8.8 ipv6=off;
+	
 	# redirect server error pages to the static page
 	error_page 404 /404.html;
 	location = /404.html {
