@@ -25,6 +25,10 @@ if [ ! -d /etc/nginx ]; then
 fi
 if [ ! "$(ls -A /etc/nginx | grep -v nginx.conf | grep -v conf.d)" ]; then
         rsync -av --exclude=nginx.conf --exclude=conf.d /opt/nginx-${NGINX_VER}/conf/* /etc/nginx/
+        # below via mount
+        #cp -rv /opt/nginx_cerbot_conf/nginx/nginx.conf /etc/nginx/nginx.conf
+        #cp -rv /opt/nginx_cerbot_conf/nginx/conf.d /etc/nginx/
+
 fi
 if [ ! -f /etc/nginx/conf.d/${DOMAIN}.conf ]; then 
         /bin/cp -v /etc/nginx/conf.d/forward_proxy.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
