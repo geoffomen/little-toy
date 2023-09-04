@@ -45,8 +45,8 @@ if [ ! -d /var/log/nginx ]; then
 fi
 
 if [ ! -f /etc/periodic/daily/cerbot_renew.sh ]; then
-	cp -v /opt/alpine_nginx_cerbot/certbot/cerbot_renew.sh /etc/periodic/daily/
-        chmod +x /etc/periodic/daily/cerbot_renew.sh
+	cp -v /opt/alpine_nginx_cerbot/certbot/cerbot_renew.sh /etc/periodic/weekly/
+        chmod +x /etc/periodic/weekly/cerbot_renew.sh
 fi
 for cf in $(cd /etc/nginx/conf.d/ && ls *.conf | grep -v default.conf); do
 	d=$(echo ${cf} |sed -e 's/.conf$//'); 
@@ -58,7 +58,7 @@ done
 
 
 # Kick off cron
-/usr/sbin/crond -f -d 8 &
+/usr/sbin/crond -b -d 8 
 
 # Start nginx
 /usr/sbin/nginx -c /etc/nginx/nginx.conf -g "daemon off;"
