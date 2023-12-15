@@ -1,0 +1,61 @@
+server {
+    # The listen directive can have several additional parameters specific to socket-related system calls. 
+    # These parameters can be specified in any listen directive, but only once for a given address:port pair.
+    # reuseport 在address:port对中，只能出现一次。
+    # forward proxy模块默认使用default虚拟服务器处理链接，所以必需在启用forward proxy模块的虚拟服务器中声明为default。
+    listen 80 reuseport default;
+    listen [::]:80 reuseport default;
+    server_name {{DOMAIN}};
+    return 301 https://{{DOMAIN}}$request_uri;
+}
+
+server {
+    # reuseport 在address:port对中，只能出现一次。
+    # forward proxy模块默认使用default虚拟服务器处理链接，所以必需在启用forward proxy模块的虚拟服务器中声明为default。
+    listen 8000 ssl reuseport default;
+    listen [::]:8000 ssl reuseport default;
+    server_name {{DOMAIN}};
+    
+    access_log /var/log/nginx/access_{{DOMAIN}}.log main buffer=64k flush=3s;
+
+    ssl_certificate /etc/letsencrypt/live/{{DOMAIN}}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{DOMAIN}}/privkey.pem;
+
+    # Enables a shared SSL cache with size that can hold around 8000 sessions.
+    #ssl_session_cache shared:SSL:9m;
+    ssl_session_timeout 9h;
+    ssl_session_tickets off;
+    # Specifies that our cipher suits should be preferred over client ciphers.
+    ssl_prefer_server_ciphers on;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers EECDH+CHACHA20:EECDH+AES;
+    ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
+    
+    # dns resolver used by forward proxying
+    resolver 9.9.9.9 1.1.1.1 8.8.8.8 116.116.116.116 ipv6=off;
+
+    # forward proxy for CONNECT request
+    proxy_connect;
+    proxy_connect_allow            all;
+    proxy_connect_connect_timeout  15s;
+    proxy_connect_read_timeout     75s;
+    proxy_connect_send_timeout     75s;
+    
+    # redirect server error pages to the static page
+    error_page 404 /404.html;
+    location = /404.html {
+        root /usr/share/nginx/html;
+    }
+    
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+
+    location / {
+        root /usr/share/nginx/html/;
+        try_files $uri $uri/ /index.html;
+        #rewrite ^/$ https://www.example.com/ redirect;
+    }
+}
+

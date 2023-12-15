@@ -13,7 +13,6 @@ services:
             - 80:80
             - 443:443
         environment:  # env var to be passed to container, not affect the compose-file's var
-            - DOMAIN=example.com
             - EMAIL=hi@example.com
             - NGINX_VER=1.23.2
         volumes:

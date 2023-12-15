@@ -7,10 +7,6 @@ CERT_DIR=/etc/letsencrypt
 
 
 has_err=0
-if [ -z "${DOMAIN}" ]; then
-        echo "DOMAIN environment var is undefined"
-        has_err=1
-fi
 if [ -z "${EMAIL}" ]; then
         echo "EMAIL environment var is undefined"
         has_err=1
@@ -30,10 +26,7 @@ if [ ! "$(ls -A /etc/nginx | grep -v nginx.conf | grep -v conf.d)" ]; then
         #cp -rv /opt/nginx_cerbot_conf/nginx/conf.d /etc/nginx/
 
 fi
-if [ ! -f /etc/nginx/conf.d/${DOMAIN}.conf ]; then 
-        /bin/cp -v /etc/nginx/conf.d/forward_proxy.conf.template /etc/nginx/conf.d/${DOMAIN}.conf
-        ${SED} -i "s/{{DOMAIN}}/${DOMAIN}/g" /etc/nginx/conf.d/${DOMAIN}.conf
-fi
+
 if [ ! -d /usr/share/nginx/html/ ]; then
         mkdir -p /usr/share/nginx/html/
 fi
