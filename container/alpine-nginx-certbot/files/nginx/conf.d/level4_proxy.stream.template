@@ -1,5 +1,5 @@
 upstream http_gatway {
-    server 127.0.0.1:8000;
+    server 127.0.0.1:1443;
 }
 
 upstream other_gatway {
