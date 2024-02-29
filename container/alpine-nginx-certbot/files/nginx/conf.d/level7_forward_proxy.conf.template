@@ -23,17 +23,17 @@ server {
     ssl_session_tickets off;
     # Specifies that our cipher suits should be preferred over client ciphers.
     ssl_prefer_server_ciphers on;
-    ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers EECDH+CHACHA20:EECDH+AES;
     ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
     
     # dns resolver used by forward proxying
-    resolver 9.9.9.9 1.1.1.1 8.8.8.8 116.116.116.116 ipv6=off;
+    resolver 1.1.1.1 8.8.8.8 ipv6=off;
 
     # forward proxy for CONNECT request
     proxy_connect;
     proxy_connect_allow            all;
-    proxy_connect_connect_timeout  15s;
+    proxy_connect_connect_timeout  75s;
     proxy_connect_read_timeout     75s;
     proxy_connect_send_timeout     75s;
     

@@ -37,7 +37,7 @@ server {
     # 允许在预读阶段从SSL/TSL握手过程中提取SNI、协议版本等信息。重点，一定要加这句。
     ssl_preread on;    
 
-    resolver 9.9.9.9 1.1.1.1 8.8.8.8 116.116.116.116;
+    resolver 1.1.1.1 8.8.8.8;
 
     proxy_pass $upstream;
 }
